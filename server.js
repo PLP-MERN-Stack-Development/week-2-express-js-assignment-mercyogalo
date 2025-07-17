@@ -4,68 +4,64 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { v4: uuidv4 } = require('uuid');
+const mongoose =require("mongoose");
+const Product = require('./models/Product');
+require('dotenv').config();
+
 
 // Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+
+
 // Middleware setup
 app.use(bodyParser.json());
+app.use(express.json());
 
-// Sample in-memory products database
-let products = [
-  {
-    id: '1',
-    name: 'Laptop',
-    description: 'High-performance laptop with 16GB RAM',
-    price: 1200,
-    category: 'electronics',
-    inStock: true
-  },
-  {
-    id: '2',
-    name: 'Smartphone',
-    description: 'Latest model with 128GB storage',
-    price: 800,
-    category: 'electronics',
-    inStock: true
-  },
-  {
-    id: '3',
-    name: 'Coffee Maker',
-    description: 'Programmable coffee maker with timer',
-    price: 50,
-    category: 'kitchen',
-    inStock: false
-  }
-];
+
+
+
+//Routes
+const productRoutes = require('./routes/productRoutes'); // adjust the path if needed
+app.use(productRoutes);
+
 
 // Root route
-app.get('/', (req, res) => {
+router.get('/', (req, res) => {
   res.send('Welcome to the Product API! Go to /api/products to see all products.');
 });
 
-// TODO: Implement the following routes:
-// GET /api/products - Get all products
-// GET /api/products/:id - Get a specific product
-// POST /api/products - Create a new product
-// PUT /api/products/:id - Update a product
-// DELETE /api/products/:id - Delete a product
 
-// Example route implementation for GET /api/products
-app.get('/api/products', (req, res) => {
-  res.json(products);
+
+
+mongoose
+.connect(process.env.Mongo_Uri, {
+  useUnifiedTopology: true,
+  useNewUrlParser: true
+})
+.then(() => {
+  console.log(`Mongodb connected`)
+})
+.catch((err) => {
+  console.error(`Mongodb error is`, err)
 });
+
+
+
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+
 
 // TODO: Implement custom middleware for:
 // - Request logging
 // - Authentication
 // - Error handling
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+
 
 // Export the app for testing purposes
 module.exports = app; 
